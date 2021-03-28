@@ -30,7 +30,7 @@
 [Ss]cripts
 pyvenv.cfg
 .venv
-Backend/attendance/atenv
+.Backend/attendance/atenv
 pip-selfcheck.json
 
 ### VisualStudioCode ###
