@@ -12,7 +12,9 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 
 from ..decorators import teacher_required
 from ..forms import TeacherSignUpForm
-from ..models import User
+from ..models import User, Level, Class, Attendance
+
+# QUIZ = CLASS, ANSWER = ATTENDANCE
 
 
 class TeacherSignUpView(CreateView):
@@ -36,3 +38,19 @@ class TeacherWelcomeView(ListView):
     def get_queryset(self):
         """Return Schools """
         return self.request.user.username
+
+
+@method_decorator([login_required, teacher_required], name='dispatch')
+class ClassListView(ListView):
+    model = Class
+    ordering = ('name', )
+    context_object_name = 'classes'
+    template_name = 'classroom/teachers/class_list.html'
+
+    def get_queryset(self):
+        queryset = self.request.user.classes \
+            .selected_related('level') \
+            .annotate(attendee_count=Count('classes', distinct=True)) \
+            .annotate(attendee_count=Count('attended_class', distinct=True))
+
+        return queryset
