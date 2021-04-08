@@ -9,7 +9,7 @@ class SignUpView(TemplateView):
 def home(request):
     if request.user.is_authenticated:
         if request.user.is_teacher:
-            return redirect('teachers:welcome_teacher')
+            return redirect('teachers:quiz_change_list')
         else:
-            return redirect('students:welcome_students')
+            return redirect('students:class_list')
     return render(request, 'classroom/home.html')

@@ -8,9 +8,9 @@ class User(AbstractUser):
     is_teacher = models.BooleanField(default=False)
 
 
-class Level(models.Model):
+class Subject(models.Model):
     name = models.CharField(max_length=30)
-    color = models.CharField(max_length=7, default='#016b2f')
+    color = models.CharField(max_length=7, default='#007bff')
 
     def __str__(self):
         return self.name
@@ -18,36 +18,36 @@ class Level(models.Model):
     def get_html_badge(self):
         name = escape(self.name)
         color = escape(self.color)
-        html = '<span class="badge badge-success" style="background-color: %s">%s</span>' % (
+        html = '<span class="badge badge-primary" style="background-color: %s">%s</span>' % (
             color, name)
         return mark_safe(html)
 
 
-class Class(models.Model):
+class Quiz(models.Model):
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='classes')
+        User, on_delete=models.CASCADE, related_name='quizzes')
     name = models.CharField(max_length=255)
     level = models.ForeignKey(
-        Level, on_delete=models.CASCADE, related_name='classes')
+        Subject, on_delete=models.CASCADE, related_name='quizzes')
 
     def __str__(self):
         return self.name
 
 
-class Attendance(models.Model):
-    course = models.ForeignKey(
-        Class, on_delete=models.CASCADE, related_name='classes')
-    text = models.CharField('Class Code', max_length=20)
+class Question(models.Model):
+    quiz = models.ForeignKey(
+        Quiz, on_delete=models.CASCADE, related_name='questions')
+    text = models.CharField('Question', max_length=255)
 
     def __str__(self):
         return self.text
 
 
-class ClassCode(models.Model):
-    attendance = models.ForeignKey(
-        Attendance, on_delete=models.CASCADE, related_name='class_code')
-    text = models.CharField('Class code', max_length=20)
-    is_correct = models.BooleanField('Correct code', default=False)
+class Answer(models.Model):
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name='answers')
+    text = models.CharField('Answer', max_length=255)
+    is_correct = models.BooleanField('Correct answer', default=False)
 
     def __str__(self):
         return self.text
@@ -56,31 +56,33 @@ class ClassCode(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
-    classes = models.ManyToManyField(Class, through='AttendedClass')
-    interests = models.ManyToManyField(Level, related_name='student_level')
+    quizzes = models.ManyToManyField(Quiz, through='TakenQuiz')
+    level = models.ManyToManyField(
+        Subject, related_name='interested_students')
 
-    def get_unattended_classes(self, course):
-        attended_classes = self.attended_classes \
-            .filter(classcode__attendance__class=course) \
-            .values_list('classcode__attendance__pk', flat=True)
-        classes = course.classes.exclude(
-            pk__in=attended_classes).order_by('text')
-        return classes
+    def get_unanswered_questions(self, quiz):
+        answered_questions = self.quiz_answers \
+            .filter(answer__question__quiz=quiz) \
+            .values_list('answer__question__pk', flat=True)
+        questions = quiz.questions.exclude(
+            pk__in=answered_questions).order_by('text')
+        return questions
 
     def __str__(self):
         return self.user.username
 
 
-class AttendedClass(models.Model):
+class TakenQuiz(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='attended_class')
-    course = models.ForeignKey(
-        Class, on_delete=models.CASCADE, related_name='attended_class')
+        Student, on_delete=models.CASCADE, related_name='taken_quizzes')
+    quiz = models.ForeignKey(
+        Quiz, on_delete=models.CASCADE, related_name='taken_quizzes')
+    score = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
 
 
 class StudentAnswer(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='attended_classes')
+        Student, on_delete=models.CASCADE, related_name='quiz_answers')
     answer = models.ForeignKey(
-        ClassCode, on_delete=models.CASCADE, related_name='+')
+        Answer, on_delete=models.CASCADE, related_name='+')
