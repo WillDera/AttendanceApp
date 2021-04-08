@@ -48,13 +48,13 @@ class QuizListView(ListView):
     model = Quiz
     ordering = ('name', )
     context_object_name = 'quizzes'
-    template_name = 'classroom/students/quiz_list.html'
+    template_name = 'classroom/students/class_list.html'
 
     def get_queryset(self):
         student = self.request.user.student
         student_level = student.level.values_list('pk', flat=True)
         taken_quizzes = student.quizzes.values_list('pk', flat=True)
-        queryset = Quiz.objects.filter(subject__in=student_level) \
+        queryset = Quiz.objects.filter(level__in=student_level) \
             .exclude(pk__in=taken_quizzes) \
             .annotate(questions_count=Count('questions')) \
             .filter(questions_count__gt=0)
@@ -69,7 +69,7 @@ class TakenQuizListView(ListView):
 
     def get_queryset(self):
         queryset = self.request.user.student.taken_quizzes \
-            .select_related('quiz', 'quiz__subject') \
+            .select_related('quiz', 'quiz__level') \
             .order_by('quiz__name')
         return queryset
 
@@ -112,7 +112,7 @@ def take_quiz(request, pk):
                     else:
                         messages.success(
                             request, 'Congratulations! You completed the quiz %s with success! You scored %s points.' % (quiz.name, score))
-                    return redirect('students:quiz_list')
+                    return redirect('students:class_list')
     else:
         form = TakeQuizForm(question=question)
 

@@ -15,7 +15,7 @@
         {% for taken_quiz in taken_quizzes %}
           <tr>
             <td>{{ taken_quiz.quiz.name }}</td>
-            <td>{{ taken_quiz.quiz.subject.get_html_badge }}</td>
+            <td>{{ taken_quiz.quiz.level.get_html_badge }}</td>
             <td>{{ taken_quiz.score }}</td>
           </tr>
         {% empty %}
