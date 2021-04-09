@@ -13,16 +13,18 @@
       </button>
     </div>
   {% endif %}
-  <div class="row">
-    <div class="col-lg-4 col-md-6 col-sm-8 col-12">
-      <h2>Log in</h2>
-      <form method="post" novalidate>
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next }}">
-        {{ form.username|as_crispy_field }}
-        {{ form.password|as_crispy_field }}
-        <button type="submit" class="btn btn-primary">Log in</button>
-      </form>
+  <div class="row align-items-center">
+    <div class="col-12">
+      <h2 class="text-center my-4">Log into your account</h2>
+      <div class="mx-3 centered">
+        <form class="pt-4" method="post" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          {{ form.username|as_crispy_field }}
+          {{ form.password|as_crispy_field }}
+          <button type="submit" class="btn btn-success">Log in</button>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}
