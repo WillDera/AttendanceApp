@@ -41,14 +41,15 @@ class ClassListView(ListView):
         queryset = self.request.user.quizzes \
             .select_related('level') \
             .annotate(questions_count=Count('questions', distinct=True)) \
-            .annotate(taken_count=Count('taken_quizzes', distinct=True))
+            .annotate(taken_count=Count('taken_quizzes', distinct=True)) \
+            .order_by('created__month')
         return queryset
 
 
 @method_decorator([login_required, teacher_required], name='dispatch')
 class QuizCreateView(CreateView):
     model = Quiz
-    fields = ('name', 'level', )
+    fields = ('name', 'level', 'department', )
     template_name = 'classroom/teachers/quiz_add_form.html'
 
     def form_valid(self, form):
@@ -56,7 +57,7 @@ class QuizCreateView(CreateView):
         quiz.owner = self.request.user
         quiz.save()
         messages.success(
-            self.request, 'The quiz was created with success! Go ahead and add some questions now.')
+            self.request, 'The class was created successfully! Go ahead and add some questions now.')
         return redirect('teachers:quiz_change', quiz.pk)
 
 
@@ -75,7 +76,7 @@ class QuizUpdateView(UpdateView):
     def get_queryset(self):
         '''
         This method is an implicit object-level permission management
-        This view will only match the ids of existing quizzes that belongs
+        This view will only match the ids of existing classes that belongs
         to the logged in user.
         '''
         return self.request.user.quizzes.all()
@@ -94,7 +95,7 @@ class QuizDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         quiz = self.get_object()
         messages.success(
-            request, 'The quiz %s was deleted with success!' % quiz.name)
+            request, 'The class "%s" was deleted successfully!' % quiz.name)
         return super().delete(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -128,7 +129,7 @@ class QuizResultsView(DetailView):
 @login_required
 @teacher_required
 def question_add(request, pk):
-    # By filtering the quiz by the url keyword argument `pk` and
+    # By filtering the class by the url keyword argument `pk` and
     # by the owner, which is the logged in user, we are protecting
     # this view at the object-level. Meaning only the owner of
     # quiz will be able to add questions to it.
@@ -180,7 +181,7 @@ def question_change(request, quiz_pk, question_pk):
                 form.save()
                 formset.save()
             messages.success(
-                request, 'Question and answers saved with success!')
+                request, 'Question and answers were saved successfully!')
             return redirect('teachers:quiz_change', quiz.pk)
     else:
         form = QuestionForm(instance=question)
@@ -209,7 +210,7 @@ class QuestionDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         question = self.get_object()
         messages.success(
-            request, 'The question %s was deleted with success!' % question.text)
+            request, 'The question "%s" was deleted successfully!' % question.text)
         return super().delete(request, *args, **kwargs)
 
     def get_queryset(self):

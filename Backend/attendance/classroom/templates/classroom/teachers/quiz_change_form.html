@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <nav aria-label="breadcrumb">
+  <nav aria-label="breadcrumb d-flex justify-content-start">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'teachers:quiz_change_list' %}">My Classes</a></li>
       <li class="breadcrumb-item active" aria-current="page">{{ quiz.name }}</li>
@@ -11,7 +11,7 @@
   </nav>
   <h2 class="mb-3">
     {{ quiz.name }}
-    <a href="{% url 'teachers:quiz_results' quiz.pk %}" class="btn btn-primary float-right">View results</a>
+    <a href="{% url 'teachers:quiz_results' quiz.pk %}" class="btn btn-success float-right">View results</a>
   </h2>
   <div class="row mb-3">
     <div class="col-md-6 col-sm-8 col-12">
@@ -27,10 +27,10 @@
   <div class="card">
     <div class="card-header">
       <div class="row">
-        <div class="col-10">
+        <div class="col-6">
           <strong>Questions</strong>
         </div>
-        <div class="col-2">
+        <div class="col-6 text-center">
           <strong>Answers</strong>
         </div>
       </div>
@@ -39,10 +39,10 @@
       {% for question in questions %}
         <div class="list-group-item">
           <div class="row">
-            <div class="col-10">
+            <div class="col-6">
               <a href="{% url 'teachers:question_change' quiz.pk question.pk %}">{{ question.text }}</a>
             </div>
-            <div class="col-2">
+            <div class="col-6 text-center">
               {{ question.answers_count }}
             </div>
           </div>
@@ -54,7 +54,7 @@
       {% endfor %}
     </div>
     <div class="card-footer">
-      <a href="{% url 'teachers:question_add' quiz.pk %}" class="btn btn-primary btn-sm">Add question</a>
+      <a href="{% url 'teachers:question_add' quiz.pk %}" class="btn btn-success btn-sm">Add question</a>
     </div>
   </div>
 {% endblock %}

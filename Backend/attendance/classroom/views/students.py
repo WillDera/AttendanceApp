@@ -39,7 +39,7 @@ class StudentLevelView(UpdateView):
         return self.request.user.student
 
     def form_valid(self, form):
-        messages.success(self.request, 'Level updated with success!')
+        messages.success(self.request, 'Level updated successfully!')
         return super().form_valid(form)
 
 
@@ -54,7 +54,9 @@ class QuizListView(ListView):
         student = self.request.user.student
         student_level = student.level.values_list('pk', flat=True)
         taken_quizzes = student.quizzes.values_list('pk', flat=True)
+        student_department = student.department.values_list('pk', flat=True)
         queryset = Quiz.objects.filter(level__in=student_level) \
+            .filter(department__in=student_department) \
             .exclude(pk__in=taken_quizzes) \
             .annotate(questions_count=Count('questions')) \
             .filter(questions_count__gt=0)
@@ -107,11 +109,11 @@ def take_quiz(request, pk):
                     TakenQuiz.objects.create(
                         student=student, quiz=quiz, score=score)
                     if score < 50.0:
-                        messages.warning(
-                            request, 'Better luck next time! Your score for the quiz %s was %s.' % (quiz.name, score))
+                        messages.error(
+                            request, 'Better luck next time! Your score for the "%s" quiz is %s.' % (quiz.name, score))
                     else:
                         messages.success(
-                            request, 'Congratulations! You completed the quiz %s with success! You scored %s points.' % (quiz.name, score))
+                            request, 'Congratulations! You completed the "%s" quiz with success! You scored %s points.' % (quiz.name, score))
                     return redirect('students:class_list')
     else:
         form = TakeQuizForm(question=question)

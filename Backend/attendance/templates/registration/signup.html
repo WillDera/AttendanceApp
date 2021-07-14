@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
 
-{% block content %}
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center my-5">Sign up for an account</h2>
-      <div class="my-5 text-center">
-        <p class="lead">Select below the type of account you want to create</p>
-        <br class="my-2"/>
-        <a href="{% url 'student_signup' %}" class="btn btn-student btn-lg" role="button">I'm a student</a>
-        <a href="{% url 'teacher_signup' %}" class="btn btn-teacher btn-lg" role="button">I'm a teacher</a>
+{% block card %}
+  {% block content %}
+  <div class="text-center" style="responsive: true; padding-top: 80px; padding-bottom: 100px;">
+    <img src="{% static 'img/logo.jpeg' %}" width="200" height="200" class="pb-5">
+    <h4 class="pt-2 pb-4">Select account type below.</h4>
+    <br class="my-2"/>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <a href="{% url 'student_signup' %}" class="btn btn-success btn-lg" role="button">I am a Student</a>
+          <a href="{% url 'teacher_signup' %}" class="btn btn-primary btn-lg" role="button">I am a Lecturer</a>
+        </div>
       </div>
     </div>
   </div>
-  
 {% endblock %}
+
+{% endblock card %}

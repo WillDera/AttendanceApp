@@ -10,11 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import dj_database_url
+import django_on_heroku
+import logging
+import dotenv
 import os
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# This is new:
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,9 +33,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'pjy+9sa_0cjvc*qjlp9ypvhey%7z!^)8gsmymnajb9lax7k($h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['ouiattendance.herokuapp.com',
+                 'http://ouiattendance.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -38,12 +49,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'crispy_forms',
     'classroom',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,12 +89,24 @@ WSGI_APPLICATION = 'attendance.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd76t21i1ashotm',
+#         'USER': 'phpoxjxokginug',
+#         'PASSWORD': 'd552767dd4ba1ff16c6e95f51bf18f847913c2929743a6d71d925c2b8a503c20',
+#         'HOST': 'ec2-174-129-225-160.compute-1.amazonaws.com',
+#         'PORT':  5432
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'mydatabase',
     }
 }
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 # Password validation
@@ -108,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -119,12 +144,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+MEDIA_ROOT = os.path.join(BASE_DIR, 'img')
+MEDIA_URL = '/img/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Whitenoise compression and caching
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Custom Django auth settings
@@ -154,3 +185,48 @@ MESSAGE_TAGS = {
 # Third party apps configuration
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'mysite.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'MYAPP': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}
+
+# prod_db = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(prod_db)
+
+# # This is new
+# options = DATABASES['default'].get('OPTIONS', {})
+# options.pop('sslmode', None)
+
+# django_on_heroku.settings(locals(), databases=False)
+# django_on_heroku.settings(locals())

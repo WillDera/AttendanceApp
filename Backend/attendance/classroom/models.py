@@ -23,12 +23,31 @@ class Subject(models.Model):
         return mark_safe(html)
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=100)
+    color = models.CharField(max_length=7, default="#007bff")
+
+    def __str__(self):
+        return self.name
+
+    def get_html_badge(self):
+        name = escape(self.name)
+        color = escape(self.color)
+        html = '<span class="badge badge-primary" style="background-color: %s">%s</span>' % (
+            color, name)
+        return mark_safe(html)
+
+
 class Quiz(models.Model):
+
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='quizzes')
     name = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
     level = models.ForeignKey(
         Subject, on_delete=models.CASCADE, related_name='quizzes')
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -59,6 +78,7 @@ class Student(models.Model):
     quizzes = models.ManyToManyField(Quiz, through='TakenQuiz')
     level = models.ManyToManyField(
         Subject, related_name='interested_students')
+    department = models.ManyToManyField(Department, max_length=100, default="")
 
     def get_unanswered_questions(self, quiz):
         answered_questions = self.quiz_answers \

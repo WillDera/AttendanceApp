@@ -1,19 +1,75 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% load crispy_forms_tags %}
+{% block link %}
+	<link href="https://fonts.googleapis.com/css?family=Clicker+Script" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock link %}
 
-{% block content %}
-  <div class="row align-items-center">
-    <div class="col-12">
-      <h2>Sign up as a {{ user_type }}</h2>
-      <div class="mx-3 centered">
-        <form method="post" novalidate>
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ next }}">
-          {{ form|crispy }}
-          <button type="submit" class="btn btn-success">Sign up</button>
-        </form>
-      </div>
-    </div>
-  </div>
-{% endblock %}
+{% block school_logo %}
+	
+{% endblock school_logo %}
+
+{% block card %}
+<div class="card">
+	{% comment %} <div class="text-center" style="responsive: true">
+		<img src="{% static 'img/logo.jpeg' %}" width="200" height="200" class="pb-5">
+	</div> {% endcomment %}
+	{% block card_title %}
+	{% if user_type == "student" %}
+	<div class="header bg-light p-3 m-0">
+		<h4 style="margin: 0">Create {{ user_type.capitalize }} account</h4>
+	</div>
+	{% else %}
+	<div class="header bg-light p-3 m-0">
+		<h4 style="margin: 0">Create Lecturer account</h4>
+	</div>
+	{% endif %}
+	{% endblock card_title %}
+	{% block content %}
+
+	<div class="p-4">
+	{% if user_type == "student" %}
+			<form method="post">
+			{% csrf_token %}
+			<div class="form-row">
+				<div class="form-group col-md-6 mb-0">
+					{{ form.username|as_crispy_field }}
+				</div>
+				<div class="form-group col-md-6 mb-0">
+					{{ form.password1|as_crispy_field }}
+				</div>
+				<div class="form-group col-md-6 mb-0">
+					{{ form.password2|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6 mb-0 form-select" size="0" aria-label="Default select example">
+					{{ form.non_field_errors }}
+					{{ form.level.errors }}
+					{{ form.level|as_crispy_field }}
+				</div>
+				<div class="form-group col-md-6 mb-0">
+					{{ form.department|as_crispy_field }}
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Sign up</button><br/>
+			<span class="p-1 float-right">Already have an account? <a href="{% url 'login' %}" role="button">Log in</a></span>
+		</form>
+	{% else %}
+		<form method="post">
+			{% csrf_token %}
+			<input type="hidden" name="next" value="{{ next }}">
+			{{ form|crispy }}
+			<button type="submit" class="btn btn-primary">Sign up</button><br/>
+			<span class="p-1 float-right">Already have an account? <a href="{% url 'login' %}" role="button">Log in</a></span>
+		</form>
+	{% endif %}
+	</div>
+	{% endblock %}
+</div>
+{% endblock card %}
+

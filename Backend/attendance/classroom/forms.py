@@ -4,7 +4,7 @@ from django.db import transaction
 from django.forms.utils import ValidationError
 
 from classroom.models import (Answer, Question, Student, StudentAnswer,
-                              Subject, User)
+                              Subject, User, Department)
 
 
 class TeacherSignUpForm(UserCreationForm):
@@ -20,9 +20,18 @@ class TeacherSignUpForm(UserCreationForm):
 
 
 class StudentSignUpForm(UserCreationForm):
-    level = forms.ModelMultipleChoiceField(
+
+    level = forms.ModelChoiceField(
         queryset=Subject.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.Select,
+        empty_label="Select Level",
+        required=True
+    )
+
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        widget=forms.Select,
+        empty_label="Select Department",
         required=True
     )
 
@@ -35,7 +44,8 @@ class StudentSignUpForm(UserCreationForm):
         user.is_student = True
         user.save()
         student = Student.objects.create(user=user)
-        student.level.add(*self.cleaned_data.get('level'))
+        student.level.add(self.cleaned_data.get('level'))
+        student.department.add(self.cleaned_data.get('department'))
         return user
 
 
@@ -44,7 +54,7 @@ class StudentLevelForm(forms.ModelForm):
         model = Student
         fields = ('level', )
         widgets = {
-            'level': forms.CheckboxSelectMultiple
+            'level': forms.SelectMultiple,
         }
 
 

@@ -1,33 +1,39 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  {% include 'classroom/students/_header.html' with active='new' %}
-  <div class="card">
-    <table class="table mb-0">
-      <thead>
-        <tr>
-          <th>Class</th>
-          <th>Level</th>
-          <th>Length</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for quiz in quizzes %}
-          <tr>
-            <td class="align-middle">{{ quiz.name }}</td>
-            <td class="align-middle">{{ quiz.level.get_html_badge }}</td>
-            <td class="align-middle">{{ quiz.questions_count }} questions</td>
-            <td class="text-right">
-              <a href="{% url 'students:take_quiz' quiz.pk %}" class="btn btn-primary">Mark Attendance</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td class="bg-light text-center font-italic" colspan="4">No class matching your level right now.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+{% block content %} 
+{% include 'classroom/students/_header.html' with active='new' %}
+<div class="card">
+  <table class="table mb-0">
+    <thead>
+      <tr>
+        <th>Class</th>
+        <th>Level</th>
+        <th>Questions</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for quiz in quizzes %}
+      <tr>
+        <td class="align-middle">{{ quiz.name }}</td>
+        <td class="align-middle">{{ quiz.level.get_html_badge }}</td>
+        <td class="align-middle">{{ quiz.questions_count }}</td>
+        <td class="text-right">
+          <a
+            href="{% url 'students:take_quiz' quiz.pk %}"
+            class="btn btn-success btn-sm"
+            >Mark Attendance</a
+          >
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td class="bg-light text-center font-italic" colspan="4">
+          No class matching your level right now.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

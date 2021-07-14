@@ -1,56 +1,130 @@
-{% load static %}<!doctype html>
+{% load static %}
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}OUI Attendance Portal{% endblock %}</title>
-    <link rel="icon" href="{% static 'img/favicon.png' %}">
-    <link href="https://fonts.googleapis.com/css?family=Clicker+Script" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/fontello-2f186091/css/fontello.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
-    {% if user.is_authenticated and user.is_teacher %}
-      <link rel="stylesheet" type="text/css" href="{% static 'css/teachers.css' %}">
-    {% else %}
-      <link rel="stylesheet" type="text/css" href="{% static 'css/students.css' %}">
-    {% endif %}
+    <link rel="shortcut icon" href="{% static 'img/logo.jpeg' %}" type="image/x-cion">
+    {% block link %}{% endblock link %}
+    {% block style %}{% endblock style %}
   </head>
-  <body style="background-color: #f1f1f1">
-    <div class="container my-4">
-      <div class="row justify-content-center">
-      <div class="col-9 text-right">
-              {% if user.is_authenticated %}
-                <p class="pt-3">Logged in as <strong>{{ user.username }}</strong>. <a href="{% url 'logout' %}">Log out</a>.</p>
-              {% else %}
-                <a href="{% url 'login' %}" class="btn btn-light" role="button">Log in</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary" role="button">Sign up</a>
-              {% endif %}
-            </div>
+  <body>
+  
+  <!-- Global Navbar -->
+  <div class="navbar bg-dark navbar-fixed-top sticky-top">
+    <div class="navbar-header pull-left">
+      <a class="navbar-brand" href="{% url 'home'%}">
+        <img src="{% static 'img/logo.jpeg' %}" width="30" height="30">
+      </a>
+    </div>
+    <div class="navbar-header pull-right">
+      {% if user.is_authenticated %}
+        <p class="pt-3 text-light">Logged in as <strong>{{ user.username.capitalize }}</strong>. <a href="{% url 'logout' %}" class="btn btn-danger navbar-btn text-light" role="button">Log out</a></p>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-default navbar-btn text-success" role="button">Log in</a>
+        <a href="{% url 'signup' %}" class="btn btn-default navbar-btn text-primary" role="button">Sign up</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- All contents go here -->
+    <div class="d-flex align-items-center justify-content-center">
+
         <div class="col-md-10 col-sm-12">
-          <div class="card mb-3 my-5">
+          <div class="mb-3 my-5">
+            {% block card %}
+            <div class="card-title">
+            {% block card_title %}{% endblock card_title %}
+            </div>
             <div class="card-body">
-              {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
+            {% for message in messages %}
+              <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
               {% endfor %}
               {% block content %}
               {% endblock %}
             </div>
+              {% endblock card %}
           </div>
         </div>
-      </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <script type="text/javascript">
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-      })
+      const form = document.getElementById('form');
+      const username = document.getElementById('username');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      const password2 = document.getElementById('password2');
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        checkInputs();
+      });
+
+      function checkInputs() {
+        // trim to remove the whitespaces
+        const usernameValue = username.value.trim();
+        const emailValue = email.value.trim();
+        const passwordValue = password.value.trim();
+        const password2Value = password2.value.trim();
+        
+        if(usernameValue === '') {
+          setErrorFor(username, 'Username cannot be blank');
+        } else {
+          setSuccessFor(username);
+        }
+        
+        if(emailValue === '') {
+          setErrorFor(email, 'Email cannot be blank');
+        } else if (!isEmail(emailValue)) {
+          setErrorFor(email, 'Not a valid email');
+        } else {
+          setSuccessFor(email);
+        }
+        
+        if(passwordValue === '') {
+          setErrorFor(password, 'Password cannot be blank');
+        } else {
+          setSuccessFor(password);
+        }
+        
+        if(password2Value === '') {
+          setErrorFor(password2, 'Password2 cannot be blank');
+        } else if(passwordValue !== password2Value) {
+          setErrorFor(password2, 'Passwords does not match');
+        } else{
+          setSuccessFor(password2);
+        }
+      }
+
+      function setErrorFor(input, message) {
+        const formControl = input.parentElement;
+        const small = formControl.querySelector('small');
+        formControl.className = 'form-control error';
+        small.innerText = message;
+      }
+
+      function setSuccessFor(input) {
+        const formControl = input.parentElement;
+        formControl.className = 'form-control success';
+      }
+        
+      function isEmail(email) {
+        return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+      }
+
     </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   </body>
 </html>
