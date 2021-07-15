@@ -33,7 +33,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = 'pjy+9sa_0cjvc*qjlp9ypvhey%7z!^)8gsmymnajb9lax7k($h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['ouiattendance.herokuapp.com',
@@ -92,10 +92,10 @@ WSGI_APPLICATION = 'attendance.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'd76t21i1ashotm',
-#         'USER': 'phpoxjxokginug',
-#         'PASSWORD': 'd552767dd4ba1ff16c6e95f51bf18f847913c2929743a6d71d925c2b8a503c20',
-#         'HOST': 'ec2-174-129-225-160.compute-1.amazonaws.com',
+#         'NAME': 'daf6dphjcd8esf',
+#         'USER': 'quifarxjuvphbe',
+#         'PASSWORD': '1ebf534bd19069b0fc1e8cf8bdf729cdeecbcf70f05f156e46c12ecfda9422c5',
+#         'HOST': 'ec2-54-91-188-254.compute-1.amazonaws.com',
 #         'PORT':  5432
 #     }
 # }
@@ -103,10 +103,12 @@ WSGI_APPLICATION = 'attendance.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite'),
     }
 }
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -224,7 +226,7 @@ LOGGING = {
 # prod_db = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(prod_db)
 
-# # This is new
+# This is new
 # options = DATABASES['default'].get('OPTIONS', {})
 # options.pop('sslmode', None)
 

@@ -47,7 +47,7 @@
 {% block content %}
 <div class="text-center" style="responsive: true; padding-bottom: 100px;">
   <img src="{% static 'img/logo.jpeg' %}" width="200" height="200" class="pb-5">
-  <h2 class="pb-4 ui-layout-column-6 ui-layout-column-center" style="text-align: center">Welcome to the OUI Attendance Portal! 
+  <h2 class="pb-4 ui-layout-column-6 ui-layout-column-center" style="text-align: center">Welcome to OUI Attendance Portal! 
     {% if user.is_authenticated %}
       {% if user.is_teacher %}
         <span class="icon-feather" data-toggle="tooltip" data-placement="right" title="Teacher profile"></span>

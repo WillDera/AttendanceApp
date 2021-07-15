@@ -2,7 +2,7 @@
 
 {% block content %}
   {% include 'classroom/students/_header.html' with active='taken' %}
-  <div class="card">
+  <div class="card table-responsive">
     <table class="table mb-0">
       <thead>
         <tr>
@@ -20,7 +20,7 @@
           </tr>
         {% empty %}
           <tr>
-            <td class="bg-light text-center font-italic" colspan="3">You haven't completed any quiz yet.</td>
+            <td class="bg-light text-center font-italic" colspan="3">You haven't attended any lectures/meetings yet.</td>
           </tr>
         {% endfor %}
       </tbody>

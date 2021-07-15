@@ -11,17 +11,17 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from ..decorators import teacher_required
-from ..forms import BaseAnswerInlineFormSet, QuestionForm, TeacherSignUpForm
+from ..forms import BaseAnswerInlineFormSet, QuestionForm, LecturerSignUpForm
 from ..models import Answer, Question, Quiz, User
 
 
-class TeacherSignUpView(CreateView):
+class LecturerSignUpView(CreateView):
     model = User
-    form_class = TeacherSignUpForm
+    form_class = LecturerSignUpForm
     template_name = 'registration/signup_form.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'teacher'
+        kwargs['user_type'] = 'lecturer'
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):

@@ -6,17 +6,17 @@
 {% block content %}
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'teachers:quiz_change_list' %}">My Quizzes</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'teachers:quiz_change_list' %}">My Classes</a></li>
       <li class="breadcrumb-item"><a href="{% url 'teachers:quiz_change' quiz.pk %}">{{ quiz.name }}</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Results</li>
+      <li class="breadcrumb-item active" aria-current="page">Attendance</li>
     </ol>
   </nav>
-  <h2 class="mb-3">{{ quiz.name }} Results</h2>
+  <h2 class="mb-3">{{ quiz.name }} Attendance</h2>
 
-  <div class="card">
+  <div class="card table-responsive">
     <div class="card-header">
-      <strong>Taken Quizzes</strong>
-      <span class="badge badge-pill badge-primary float-right">Average Score: {{ quiz_score.average_score|default_if_none:0.0 }}</span>
+      <strong>Attendees</strong>
+      <span class="badge badge-pill badge-primary float-right">Avg. Score: {{ quiz_score.average_score|default_if_none:0.0 }}</span>
     </div>
     <table class="table mb-0">
       <thead>

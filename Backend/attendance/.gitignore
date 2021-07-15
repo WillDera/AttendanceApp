@@ -1,1 +1,6 @@
 .env
+mysite.log
+*.log
+*.pot
+*.pyc
+__pycache__/

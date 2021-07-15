@@ -25,7 +25,7 @@ urlpatterns = [
     path('accounts/signup/', classroom.SignUpView.as_view(), name='signup'),
     path('accounts/signup/student/',
          students.StudentSignUpView.as_view(), name='student_signup'),
-    path('accounts/signup/teacher/',
-         teachers.TeacherSignUpView.as_view(), name='teacher_signup'),
+    path('accounts/signup/lecturer/',
+         teachers.LecturerSignUpView.as_view(), name='teacher_signup'),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
