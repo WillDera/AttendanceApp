@@ -33,7 +33,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = 'pjy+9sa_0cjvc*qjlp9ypvhey%7z!^)8gsmymnajb9lax7k($h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 # DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['ouiattendance.herokuapp.com',
